@@ -674,9 +674,19 @@ def aob_to_str(list_of_bytes, encoding="ascii"):
         str: str equivalent of array
     """
 
-    # 3f is ascii hex representation of char "?"
-    return bytes.fromhex("".join(list_of_bytes).replace("??", "3f")).decode(encoding, "surrogateescape")
+    ### make an actual list of bytes
+    byteList = []
+    byteList.append(list_of_bytes)
+    newByte=0
 
+    for sByte in byteList:
+        byte=int(sByte,16)
+        newByte=f'{byte:x}'
+        if ( (byte < 32) or (byte > 126) ):
+            newByte=f'{46:x}' # replace non-printable chars with a period (.)
+
+    hexBytes=bytes.fromhex(newByte)
+    return hexBytes.decode(encoding, "surrogateescape")
 
 #:tag:ValueType
 def str_to_aob(string, encoding="ascii"):

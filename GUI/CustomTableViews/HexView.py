@@ -40,8 +40,8 @@ class QHexView(QTableView):
         _self_name=self.__class__.__name__
         size = self.columnWidth(0) * self.model().columnCount()
         if (_self_name == "QHexView"):
-            self.setMinimumWidth(size*2)
-            self.setMaximumWidth(size*2)
+            self.setMinimumWidth(size*1.875)
+            self.setMaximumWidth(size*1.875)
             self.resizeColumnsToContents()
         else:
             self.setMinimumWidth(size)
