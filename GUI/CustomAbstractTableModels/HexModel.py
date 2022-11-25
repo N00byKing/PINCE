@@ -36,13 +36,14 @@ class QHexModel(QAbstractTableModel):
         return self.column_count
 
     def data(self, QModelIndex, int_role=None):
-        if (not self.data_array is None and len(self.data_array) > 0):
+        if (not self.data_array is None and len(self.data_array) > 0 and QModelIndex.isValid()):
             if int_role == Qt.ItemDataRole.BackgroundRole:
                 address = self.current_address + QModelIndex.row() * self.column_count + QModelIndex.column()
                 if SysUtils.modulo_address(address, GDB_Engine.inferior_arch) in self.breakpoint_list:
                     return QVariant(QColor.red)
-            else:
-                return QVariant(SysUtils.aob_to_str(self.data_array[QModelIndex.row() * self.column_count + QModelIndex.column()]))
+            elif int_role == Qt.ItemDataRole.DisplayRole:
+                return QVariant(self.data_array[QModelIndex.row() * self.column_count + QModelIndex.column()])
+
         return QVariant()
 
     def refresh(self, int_address, offset, data_array=None, breakpoint_info=None):

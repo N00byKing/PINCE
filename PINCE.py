@@ -2856,21 +2856,21 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
     def on_hex_view_current_changed(self, QModelIndex_current):
         if GDB_Engine.currentpid == -1:
             return
-        self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.hex_view_last_selected_address_int = self.tableView_HexView_Hex.get_selected_address()
         self.tableView_HexView_Ascii.selectionModel().setCurrentIndex(QModelIndex_current,
-                                                                      QItemSelectionModel.ClearAndSelect)
+                                                                      QItemSelectionModel.SelectionFlag.ClearAndSelect)
         self.tableWidget_HexView_Address.selectRow(QModelIndex_current.row())
-        self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.NoSelection)
+        self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
 
     def on_ascii_view_current_changed(self, QModelIndex_current):
         if GDB_Engine.currentpid == -1:
             return
-        self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.tableView_HexView_Hex.selectionModel().setCurrentIndex(QModelIndex_current,
-                                                                    QItemSelectionModel.ClearAndSelect)
+                                                                    QItemSelectionModel.SelectionFlag.ClearAndSelect)
         self.tableWidget_HexView_Address.selectRow(QModelIndex_current.row())
-        self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.NoSelection)
+        self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
 
     # TODO: Consider merging HexView_Address, HexView_Hex and HexView_Ascii into one UI class
     # TODO: Move this function to that class if that happens
@@ -2915,12 +2915,12 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
                 row_index = int(index / HEX_VIEW_COL_COUNT)
                 model_index = QModelIndex(self.hex_model.index(row_index, index % HEX_VIEW_COL_COUNT))
                 self.tableView_HexView_Hex.selectionModel().setCurrentIndex(model_index,
-                                                                            QItemSelectionModel.ClearAndSelect)
+                                                                            QItemSelectionModel.SelectionFlag.ClearAndSelect)
                 self.tableView_HexView_Ascii.selectionModel().setCurrentIndex(model_index,
-                                                                              QItemSelectionModel.ClearAndSelect)
-                self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SingleSelection)
+                                                                              QItemSelectionModel.SelectionFlag.ClearAndSelect)
+                self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
                 self.tableWidget_HexView_Address.selectRow(row_index)
-                self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.NoSelection)
+                self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
                 break
         else:
             self.tableView_HexView_Hex.clearSelection()
