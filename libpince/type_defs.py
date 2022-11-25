@@ -521,3 +521,4 @@ class KeyboardModifiersTupleDict(collections.abc.Mapping):
 
     def __len__(self):
         return len(self._storage)
+

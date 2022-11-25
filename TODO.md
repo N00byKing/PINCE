@@ -2,7 +2,7 @@
 ---
 **2022/11/24 -- Fix scrolling via the vertical scrollbar in memoryview**
 
-+ Currently using the vertical scrollbar to scroll the disassembled instructions in the memoryview, and in hex view, results in endless movement of the scrollbar but no actual scrolling takes place.
+[fixed] + Currently using the vertical scrollbar to scroll the disassembled instructions in the memoryview, and in hex view, results in endless movement of the scrollbar but no actual scrolling takes place.
 
 ---
 
@@ -16,6 +16,6 @@
 
 [fixed] + Ascii text-view has <?> for non-printable characters, this needs to be changed to .
 
-+ Pressing PgUp/Dn, or arrow keys does not scroll the hex view (but the mouse wheel does)
+[fixed] + Pressing PgUp/Dn, or arrow keys does not scroll the hex view (but the mouse wheel does)
 
 ---

@@ -680,10 +680,13 @@ def aob_to_str(list_of_bytes, encoding="ascii"):
     newByte=0
 
     for sByte in byteList:
-        byte=int(sByte,16)
-        newByte=f'{byte:x}'
-        if ( (byte < 32) or (byte > 126) ):
-            newByte=f'{46:x}' # replace non-printable chars with a period (.)
+        if sByte == "??":
+            newByte=f'{63:x}'
+        else:
+            byte=int(sByte,16)
+            newByte=f'{byte:x}'
+            if ( (byte < 32) or (byte > 126) ):
+                newByte=f'{46:x}' # replace non-printable chars with a period (.)
 
     hexBytes=bytes.fromhex(newByte)
     return hexBytes.decode(encoding, "surrogateescape")

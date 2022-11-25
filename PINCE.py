@@ -2418,7 +2418,7 @@ class ConsoleWidgetForm(QWidget, ConsoleWidget):
             (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_Down), self.scroll_forwards_history)
         ])
         try:
-            actions[event.modifiers(), event.key()]()
+            actions[QKeyCombination(event.modifiers(),Qt.Key(event.key()))]()
         except KeyError:
             self.lineEdit.keyPressEvent_original(event)
 
@@ -2576,13 +2576,9 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
         self.tableWidget_Disassemble.wheelEvent = QEvent.ignore
         self.verticalScrollBar_Disassemble.wheelEvent = QEvent.ignore
 
-        GuiUtils.center_scroll_bar(self.verticalScrollBar_Disassemble)
-        self.verticalScrollBar_Disassemble.mouseReleaseEvent = self.verticalScrollBar_Disassemble_mouse_release_event
+        self.verticalScrollBar_Disassemble.sliderChange = self.disassemble_scrollbar_sliderchanged
 
-        self.disassemble_scroll_bar_timer = QTimer()
-        self.disassemble_scroll_bar_timer.setInterval(100)
-        self.disassemble_scroll_bar_timer.timeout.connect(self.check_disassemble_scrollbar)
-        self.disassemble_scroll_bar_timer.start()
+        GuiUtils.center_scroll_bar(self.verticalScrollBar_Disassemble)
 
         # Format: [address1, address2, ...]
         self.tableWidget_Disassemble.travel_history = []
@@ -2614,8 +2610,11 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
         self.tableView_HexView_Ascii.keyPressEvent = self.widget_HexView_key_press_event
 
         self.verticalScrollBar_HexView.wheelEvent = QEvent.ignore
+
+        self.verticalScrollBar_HexView.sliderChange = self.hex_view_scrollbar_sliderchanged
+
         self.tableWidget_HexView_Address.wheelEvent = QEvent.ignore
-        self.scrollArea_Hex.keyPressEvent = QEvent.ignore
+        self.scrollArea_Hex.keyPressEvent = self.widget_HexView_key_press_event
         self.tableWidget_HexView_Address.setAutoScroll(False)
         self.tableWidget_HexView_Address.setStyleSheet("QTableWidget {background-color: transparent;}")
         self.tableWidget_HexView_Address.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
@@ -2636,11 +2635,7 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
             self.tableView_HexView_Hex.verticalHeader().defaultSectionSize())
 
         GuiUtils.center_scroll_bar(self.verticalScrollBar_HexView)
-        self.hex_view_scroll_bar_timer = QTimer()
-        self.hex_view_scroll_bar_timer.setInterval(100)
-        self.hex_view_scroll_bar_timer.timeout.connect(self.check_hex_view_scrollbar)
-        self.hex_view_scroll_bar_timer.start()
-        self.verticalScrollBar_HexView.mouseReleaseEvent = self.verticalScrollBar_HexView_mouse_release_event
+
 
     def show_trace_window(self):
         if GDB_Engine.currentpid == -1:
@@ -2817,41 +2812,57 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
             desc, address_expr, value_index, length, zero_terminate = manual_address_dialog.get_values()
             self.parent().add_entry_to_addresstable(desc, address_expr, value_index, length, zero_terminate)
 
-    def verticalScrollBar_HexView_mouse_release_event(self, event):
-        GuiUtils.center_scroll_bar(self.verticalScrollBar_HexView)
+    def hex_view_scroll_up(self):
+        self.verticalScrollBar_HexView.setValue(1)
+    def hex_view_scroll_down(self):
+        self.verticalScrollBar_HexView.setValue(-1)
 
-    def verticalScrollBar_Disassemble_mouse_release_event(self, event):
-        GuiUtils.center_scroll_bar(self.verticalScrollBar_Disassemble)
-
-    def check_hex_view_scrollbar(self):
-        if GDB_Engine.inferior_status != type_defs.INFERIOR_STATUS.INFERIOR_STOPPED:
-            return
+    def hex_view_scrollbar_sliderchanged(self, event):
+        if self.bHexViewScrolling:
+                return;
+        self.bHexViewScrolling=True
+        #if GDB_Engine.inferior_status != type_defs.INFERIOR_STATUS.INFERIOR_STOPPED:
+        #    return
         maximum = self.verticalScrollBar_HexView.maximum()
         minimum = self.verticalScrollBar_HexView.minimum()
         midst = (maximum + minimum) / 2
         current_value = self.verticalScrollBar_HexView.value()
-        if midst - 10 < current_value < midst + 10:
-            return
+        #if midst - 10 < current_value < midst + 10:
+        #    self.bHexViewScrolling = False
+        #    return
         current_address = self.hex_model.current_address
         if current_value < midst:
             next_address = current_address - 0x40
         else:
             next_address = current_address + 0x40
         self.hex_dump_address(next_address)
+        GuiUtils.center_scroll_bar(self.verticalScrollBar_HexView)
+        self.bHexViewScrolling = False
 
-    def check_disassemble_scrollbar(self):
-        if GDB_Engine.inferior_status != type_defs.INFERIOR_STATUS.INFERIOR_STOPPED:
-            return
+    def disassemble_scroll_up(self):
+        self.verticalScrollBar_Disassemble.setValue(1)
+    def disassemble_scroll_down(self):
+        self.verticalScrollBar_Disassemble.setValue(-1)
+
+    def disassemble_scrollbar_sliderchanged(self, even):
+        if self.bDisassemblyScrolling:
+                return;
+        self.bDisassemblyScrolling = True
+        #if GDB_Engine.inferior_status != type_defs.INFERIOR_STATUS.INFERIOR_STOPPED:
+        #    return
         maximum = self.verticalScrollBar_Disassemble.maximum()
         minimum = self.verticalScrollBar_Disassemble.minimum()
         midst = (maximum + minimum) / 2
         current_value = self.verticalScrollBar_Disassemble.value()
-        if midst - 10 < current_value < midst + 10:
-            return
+        #if midst - 10 < current_value < midst + 10:
+        #    self.bDisassemblyScrolling = False
+        #    return
         if current_value < midst:
             self.tableWidget_Disassemble_scroll("previous", instructions_per_scroll)
         else:
             self.tableWidget_Disassemble_scroll("next", instructions_per_scroll)
+        GuiUtils.center_scroll_bar(self.verticalScrollBar_Disassemble)
+        self.bDisassemblyScrolling = False
 
     def on_hex_view_current_changed(self, QModelIndex_current):
         if GDB_Engine.currentpid == -1:
@@ -3295,7 +3306,7 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
             (QKeyCombination(Qt.KeyboardModifier.ControlModifier, Qt.Key.Key_H), lambda: self.hex_dump_address(int(current_address, 16)))
         ])
         try:
-            actions[event.modifiers(), event.key()]()
+            actions[QKeyCombination(event.modifiers(),Qt.Key(event.key()))]()
         except KeyError:
             pass
         self.tableWidget_Stack.keyPressEvent_original(event)
@@ -3378,7 +3389,7 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
             (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_R), self.update_stacktrace)
         ])
         try:
-            actions[event.modifiers(), event.key()]()
+            actions[QKeyCombination(event.modifiers(),Qt.Key(event.key()))]()
         except KeyError:
             pass
         self.tableWidget_StackTrace.keyPressEvent_original(event)
@@ -3442,10 +3453,12 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
             (QKeyCombination(Qt.KeyboardModifier.ControlModifier, Qt.Key.Key_D),
              lambda: self.disassemble_expression(hex(selected_address), append_to_travel_history=True)),
             (QKeyCombination(Qt.KeyboardModifier.ControlModifier, Qt.Key.Key_A), self.exec_hex_view_add_address_dialog),
-            (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_R), self.refresh_hex_view)
+            (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_R), self.refresh_hex_view),
+            (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_PageUp), self.hex_view_scroll_up),
+            (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_PageDown), self.hex_view_scroll_down),
         ])
         try:
-            actions[event.modifiers(), event.key()]()
+            actions[QKeyCombination(event.modifiers(),Qt.Key(event.key()))]()
         except KeyError:
             pass
         self.tableView_HexView_Hex.keyPressEvent_original(event)
@@ -3468,10 +3481,12 @@ class MemoryViewWindowForm(QMainWindow, MemoryViewWindow):
             (QKeyCombination(Qt.KeyboardModifier.ControlModifier, Qt.Key.Key_T), self.exec_trace_instructions_dialog),
             (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_R), self.refresh_disassemble_view),
             (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_Down), lambda: self.disassemble_check_viewport("next", 1)),
-            (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_Up), lambda: self.disassemble_check_viewport("previous", 1))
+            (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_Up), lambda: self.disassemble_check_viewport("previous", 1)),
+            (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_PageUp), self.disassemble_scroll_up),
+            (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_PageDown), self.disassemble_scroll_down)
         ])
         try:
-            actions[event.modifiers(), event.key()]()
+            actions[QKeyCombination(event.modifiers(),Qt.Key(event.key()))]()
         except KeyError:
             pass
         self.tableWidget_Disassemble.keyPressEvent_original(event)
@@ -4025,7 +4040,7 @@ class RestoreInstructionsWidgetForm(QWidget, RestoreInstructionsWidget):
             (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_R), self.refresh)
         ])
         try:
-            actions[event.modifiers(), event.key()]()
+            actions[QKeyCombination(event.modifiers(),Qt.Key(event.key()))]()
         except KeyError:
             pass
         self.tableWidget_Instructions.keyPressEvent_original(event)
@@ -4088,7 +4103,7 @@ class BreakpointInfoWidgetForm(QTabWidget, BreakpointInfoWidget):
             (QKeyCombination(Qt.KeyboardModifier.NoModifier, Qt.Key.Key_R), self.refresh)
         ])
         try:
-            actions[event.modifiers(), event.key()]()
+            actions[QKeyCombination(event.modifiers(),Qt.Key(event.key()))]()
         except KeyError:
             pass
         self.tableWidget_BreakpointInfo.keyPressEvent_original(event)
