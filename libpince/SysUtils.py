@@ -1078,21 +1078,11 @@ def ignore_exceptions(func):
     """A decorator to ignore exceptions"""
 
     def wrapper(*args, **kwargs):
-        """
-            The arguments seems to be:
-            [0] object <pointer>
-            [1] boolean [true/false]
-
-            Strip last item (the boolean)
-            from the args,
-        """
-        targs = args[0:len(args)-1]
         try:
             func(*targs, **kwargs)
         except:
             #print(f' Args: {args}' )
             #print(f' Kwargs: {kwargs}' )
-            #print(f' targs: {targs}' )
             traceback.print_exc()
 
     return wrapper
