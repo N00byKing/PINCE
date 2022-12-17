@@ -1079,7 +1079,7 @@ def ignore_exceptions(func):
 
     def wrapper(*args, **kwargs):
         try:
-            func(*targs, **kwargs)
+            func(*args, **kwargs)
         except:
             #print(f' Args: {args}' )
             #print(f' Kwargs: {kwargs}' )
