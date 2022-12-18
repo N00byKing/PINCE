@@ -2382,7 +2382,7 @@ class ConsoleWidgetForm(QWidget, ConsoleWidget):
 
     def scroll_to_bottom(self):
         cursor = self.textBrowser.textCursor()
-        cursor.movePosition(QTextCursor.End)
+        cursor.movePosition(QTextCursor.MoveOperation.End)
         self.textBrowser.setTextCursor(cursor)
         self.textBrowser.ensureCursorVisible()
 
@@ -4959,7 +4959,7 @@ class LibpinceReferenceWidgetForm(QWidget, LibpinceReferenceWidget):
             return
         cursor = self.textBrowser_TypeDefs.textCursor()
         cursor.clearSelection()
-        cursor.movePosition(QTextCursor.Start)
+        cursor.movePosition(QTextCursor.MoveOperation.Start)
         self.textBrowser_TypeDefs.setTextCursor(cursor)
         if self.current_found == self.found_count:
             self.current_found = 1
@@ -4975,7 +4975,7 @@ class LibpinceReferenceWidgetForm(QWidget, LibpinceReferenceWidget):
             return
         cursor = self.textBrowser_TypeDefs.textCursor()
         cursor.clearSelection()
-        cursor.movePosition(QTextCursor.Start)
+        cursor.movePosition(QTextCursor.MoveOperation.Start)
         self.textBrowser_TypeDefs.setTextCursor(cursor)
         if self.current_found == 1:
             self.current_found = self.found_count
@@ -4991,7 +4991,7 @@ class LibpinceReferenceWidgetForm(QWidget, LibpinceReferenceWidget):
         self.textBrowser_TypeDefs.setTextBackgroundColor(QColor("white"))
         cursor = self.textBrowser_TypeDefs.textCursor()
         cursor.clearSelection()
-        cursor.movePosition(QTextCursor.Start)
+        cursor.movePosition(QTextCursor.MoveOperation.Start)
         self.textBrowser_TypeDefs.setTextCursor(cursor)
 
         highlight_format = QTextCharFormat()
@@ -5010,7 +5010,7 @@ class LibpinceReferenceWidgetForm(QWidget, LibpinceReferenceWidget):
             return
         cursor = self.textBrowser_TypeDefs.textCursor()
         cursor.clearSelection()
-        cursor.movePosition(QTextCursor.Start)
+        cursor.movePosition(QTextCursor.MoveOperation.Start)
         self.textBrowser_TypeDefs.setTextCursor(cursor)
         self.textBrowser_TypeDefs.find(pattern)
         self.current_found = 1
@@ -5081,7 +5081,7 @@ class LogFileWidgetForm(QWidget, LogFileWidget):
 
             # Scrolling to bottom
             cursor = self.textBrowser_LogContent.textCursor()
-            cursor.movePosition(QTextCursor.End)
+            cursor.movePosition(QTextCursor.MoveOperation.End)
             self.textBrowser_LogContent.setTextCursor(cursor)
             self.textBrowser_LogContent.ensureCursorVisible()
         log_file.close()
@@ -5742,7 +5742,7 @@ class ExamineReferrersWidgetForm(QWidget, ExamineReferrersWidget):
         for item in disas_data:
             self.textBrowser_DisasInfo.append(item[0] + item[2])
         cursor = self.textBrowser_DisasInfo.textCursor()
-        cursor.movePosition(QTextCursor.Start)
+        cursor.movePosition(QTextCursor.MoveOperation.Start)
         self.textBrowser_DisasInfo.setTextCursor(cursor)
         self.textBrowser_DisasInfo.ensureCursorVisible()
 
