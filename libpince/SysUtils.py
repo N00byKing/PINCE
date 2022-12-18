@@ -680,7 +680,8 @@ def aob_to_str(list_of_bytes, encoding="ascii"):
     newByte=0
 
     for sByte in byteList:
-        if sByte == "??":
+        # if sByte is is ?? or if it is not a string -- replace with a period
+        if (sByte == "??") or (not isinstance(sByte, str)):
             newByte=f'{63:x}'
         else:
             byte=int(sByte,16)
