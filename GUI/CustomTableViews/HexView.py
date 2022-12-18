@@ -40,12 +40,12 @@ class QHexView(QTableView):
         _self_name=self.__class__.__name__
         size = self.columnWidth(0) * self.model().columnCount()
         if (_self_name == "QHexView"):
-            self.setMinimumWidth(size*1.875)
-            self.setMaximumWidth(size*1.875)
+            self.setMinimumWidth(int(size*1.875))
+            self.setMaximumWidth(int(size*1.875))
             self.resizeColumnsToContents()
         else:
-            self.setMinimumWidth(size)
-            self.setMaximumWidth(size)
+            self.setMinimumWidth(int(size))
+            self.setMaximumWidth(int(size))
 
     def get_selected_address(self):
         ci = self.currentIndex()
