@@ -1910,8 +1910,8 @@ class LoadingDialogForm(QDialog, LoadingDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         if parent:
             GuiUtils.center_to_parent(self)
         self.keyPressEvent = QEvent.ignore
@@ -4432,7 +4432,7 @@ class TraceInstructionsWaitWidgetForm(QWidget, TraceInstructionsWaitWidget):
     def __init__(self, address, breakpoint, parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() | Qt.Window | Qt.FramelessWindowHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
         GuiUtils.center(self)
         self.address = address
         self.breakpoint = breakpoint
@@ -4440,7 +4440,7 @@ class TraceInstructionsWaitWidgetForm(QWidget, TraceInstructionsWaitWidget):
         self.movie = QMovie(media_directory + "/TraceInstructionsWaitWidget/ajax-loader.gif", QByteArray())
         self.label_Animated.setMovie(self.movie)
         self.movie.setScaledSize(QSize(215, 100))
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.movie.setCacheMode(QMovie.CacheAll)
         self.movie.setSpeed(100)
         self.movie.start()
@@ -4951,7 +4951,7 @@ class LibpinceReferenceWidgetForm(QWidget, LibpinceReferenceWidget):
             self.tableWidget_ResourceTable.setItem(row, LIBPINCE_REFERENCE_ITEM_COL, table_widget_item)
             self.tableWidget_ResourceTable.setItem(row, LIBPINCE_REFERENCE_VALUE_COL, table_widget_item_value)
         self.tableWidget_ResourceTable.setSortingEnabled(True)
-        self.tableWidget_ResourceTable.sortByColumn(LIBPINCE_REFERENCE_ITEM_COL, Qt.AscendingOrder)
+        self.tableWidget_ResourceTable.sortByColumn(LIBPINCE_REFERENCE_ITEM_COL, Qt.SortOrder.AscendingOrder)
         GuiUtils.resize_to_contents(self.tableWidget_ResourceTable)
 
     def pushButton_TextDown_clicked(self):
@@ -5413,7 +5413,7 @@ class ReferencedStringsWidgetForm(QWidget, ReferencedStringsWidget):
                 dissect_code_dialog.scan_finished_signal.connect(dissect_code_dialog.accept)
                 dissect_code_dialog.exec()
         self.refresh_table()
-        self.tableWidget_References.sortByColumn(REF_STR_ADDR_COL, Qt.AscendingOrder)
+        self.tableWidget_References.sortByColumn(REF_STR_ADDR_COL, Qt.SortOrder.AscendingOrder)
         self.tableWidget_References.selectionModel().currentChanged.connect(self.tableWidget_References_current_changed)
         self.listWidget_Referrers.itemDoubleClicked.connect(self.listWidget_Referrers_item_double_clicked)
         self.tableWidget_References.itemDoubleClicked.connect(self.tableWidget_References_item_double_clicked)
@@ -5548,7 +5548,7 @@ class ReferencedCallsWidgetForm(QWidget, ReferencedCallsWidget):
                 dissect_code_dialog.scan_finished_signal.connect(dissect_code_dialog.accept)
                 dissect_code_dialog.exec()
         self.refresh_table()
-        self.tableWidget_References.sortByColumn(REF_CALL_ADDR_COL, Qt.AscendingOrder)
+        self.tableWidget_References.sortByColumn(REF_CALL_ADDR_COL, Qt.SortOrder.AscendingOrder)
         self.tableWidget_References.selectionModel().currentChanged.connect(self.tableWidget_References_current_changed)
         self.listWidget_Referrers.itemDoubleClicked.connect(self.listWidget_Referrers_item_double_clicked)
         self.tableWidget_References.itemDoubleClicked.connect(self.tableWidget_References_item_double_clicked)
