@@ -675,21 +675,38 @@ def aob_to_str(list_of_bytes, encoding="ascii"):
     """
 
     ### make an actual list of bytes
-    byteList = []
-    byteList.append(list_of_bytes)
+    hexString = ""
+    byteList = list_of_bytes
+    if (isinstance(list_of_bytes, list)):
+        byteList = list_of_bytes
+    else:
+        byteList = []
+        byteList.append(list_of_bytes)
+
     newByte=0
 
     for sByte in byteList:
-        # if sByte is is ?? or if it is not a string -- replace with a period
-        if (sByte == "??") or (not isinstance(sByte, str)):
-            newByte=f'{63:x}'
+        if (sByte == "??"):
+            hexString += f'{63:02x}' # replace ?? with a single ?
         else:
-            byte=int(sByte,16)
-            newByte=f'{byte:x}'
-            if ( (byte < 32) or (byte > 126) ):
-                newByte=f'{46:x}' # replace non-printable chars with a period (.)
+            if (isinstance(sByte, int)):
+                byte=sByte
+            else:
+                byte=int(sByte,16)
+            """NOTE: replacing non-printable chars with a period will
+            have an adverse effect on the ability to edit hex/ASCII data
+            since the editor dialog will replace the hex bytes with 2e rather
+            than replacing only the edited bytes.
 
-    hexBytes=bytes.fromhex(newByte)
+            So for now, don't replace them -- but be aware that this clutters
+            the ascii text in the memory view and does not look 'neat'
+            """
+            #if ( (byte < 32) or (byte > 126) ):
+            #    hexString += f'{46:02x}' # replace non-printable chars with a period (.)
+            #else:
+            hexString += f'{byte:02x}'
+
+    hexBytes=bytes.fromhex(hexString)
     return hexBytes.decode(encoding, "surrogateescape")
 
 #:tag:ValueType
@@ -703,7 +720,7 @@ def str_to_aob(string, encoding="ascii"):
     Returns:
         str: AoB equivalent of the given string
     """
-    s = str(binascii.hexlify(string.encode(encoding, "surrogateescape")), "ascii")
+    s = str(binascii.hexlify(string.encode(encoding, "surrogateescape")), encoding)
     return " ".join(s[i:i + 2] for i in range(0, len(s), 2))
 
 
