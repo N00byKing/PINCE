@@ -1927,7 +1927,7 @@ class LoadingDialogForm(QDialog, LoadingDialog):
         self.movie = QMovie(media_directory + "/LoadingDialog/ajax-loader.gif", QByteArray())
         self.label_Animated.setMovie(self.movie)
         self.movie.setScaledSize(QSize(25, 25))
-        self.movie.setCacheMode(QMovie.CacheAll)
+        self.movie.setCacheMode(QMovie.CacheMode.CacheAll)
         self.movie.setSpeed(100)
         self.movie.start()
 
@@ -4441,7 +4441,7 @@ class TraceInstructionsWaitWidgetForm(QWidget, TraceInstructionsWaitWidget):
         self.label_Animated.setMovie(self.movie)
         self.movie.setScaledSize(QSize(215, 100))
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.movie.setCacheMode(QMovie.CacheAll)
+        self.movie.setCacheMode(QMovie.CacheMode.CacheAll)
         self.movie.setSpeed(100)
         self.movie.start()
         self.pushButton_Cancel.clicked.connect(self.close)
